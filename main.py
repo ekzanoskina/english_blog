@@ -1,16 +1,21 @@
 from flask import Flask, render_template, flash, request, session, redirect, url_for
+from flask_admin import Admin
+from flask_ckeditor import CKEditor
 from flask_login import LoginManager, login_user, login_required, logout_user, user_logged_in
 
 from models import *
-from forms import LoginForm, RegisterForm
+from forms import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from flask_admin.contrib.sqla import ModelView
+from views import *
 
 
 app = Flask(__name__)
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///blog_database.db"
-app.config.update(SECRET_KEY=os.urandom(24))
+app.secret_key = 'sansal54'
+app.config['CKEDITOR_PKG_TYPE'] = 'standard'
 # initialize the app with the extension
 db.init_app(app)
 with app.app_context():
@@ -19,9 +24,17 @@ with app.app_context():
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+admin = Admin(app, name='My Admin Panel', template_mode='bootstrap4')
 
+admin.add_view(UserAdmin(User, db.session))
+admin.add_view(PostAdmin(Post, db.session))
+
+ckeditor = CKEditor(app)
 @app.route('/')
 def index():
+    post = Post(title='first', content='Разрешите фоновую активность. Еще одно возможное решение вашей проблемы - отключить ограничения фонового выполнения. Сделайте необходимые')
+    db.session.add(post)
+    db.session.commit()
     return render_template('index.html')
 
 @app.route('/posts')
@@ -101,18 +114,74 @@ def logout():
 def load_user(user):
     return User.query.get(int(user))
 
-@app.route("/post/<int:post_id>", methods=['GET', 'POST'])
-def post(post_id):
-    post = Post.query.get_or_404(post_id)
-    comments =Comment.query.order_by(Comment.id.desc()).all()
-    image_file = url_for('static', filename='profile_pics/' + post.author.image_file)
-    post.views += 1
-    db.session.commit()
-    return render_template('post.html', title=post.title, comments=comments, post=post, image_file=image_file)
 
+@app.route("/post/<int:post_id>", methods=["GET", "POST"])
+def show_single_post(post_id):
+    requested_post = Post.query.get_or_404(post_id)
 
+    comment_form = CommentForm()
+    if comment_form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to comment.")
+            return redirect(url_for('login'))
 
+        new_comment = Comment(
+            text=comment_form.comment.data,
+            author=current_user,
+            post_id=requested_post.id
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        like = Like.query.filter_by(author=current_user.id, post_id=post_id).first()
 
+        if not requested_post:
+            flash("Post does not exists.", category='error')
+        elif like:
+            db.session.delete(like)
+            db.session.commit()
+        else:
+            like = Like(author=current_user.id, post_id=post_id)
+            db.session.add(like)
+            db.session.commit()
+    return render_template("single_post.html", post=requested_post, form=comment_form)
+
+# @app.route("/create_comment/<post_id>", methods=['POST'])
+# @login_required
+# def create_comment(post_id):
+#     text = request.form.get('text')
+#     name = request.form.get('name')
+#     email = request.form.get('email')
+#
+#     if not text:
+#         flash('Comment section cannot be empty.', category='error')
+#     else:
+#         post = Post.query.filter_by(id=post_id)
+#         if post:
+#             comments = Comment(text=text, author=current_user.id, name=name, email=email, post_id=post_id)
+#             db.session.add(comments)
+#             db.session.commit()
+#             flash('Your comment was posted successfully.', category='success')
+#         else:
+#             flash('Post does not exists', category='error')
+#
+#     return redirect(url_for('post', post_id=post_id))
+# @app.route("/like_post/<post_id>", methods=['GET'])
+# @login_required
+# def like(post_id):
+#     post = Post.query.filter_by(id=post_id)
+#     like = Like.query.filter_by(author=current_user.id, post_id=post_id).first()
+#
+#     if not post:
+#         flash("Post does not exists.", category='error')
+#     elif like:
+#         db.session.delete(like)
+#         db.session.commit()
+#     else:
+#         like = Like(author=current_user.id, post_id=post_id)
+#         db.session.add(like)
+#         db.session.commit()
+#
+#     return redirect(url_for('show_single_post', post_id=post_id))
 # redirect example
 # @app.route('/home')
 # def home():

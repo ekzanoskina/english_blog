@@ -16,25 +16,42 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpeg')
     password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('Post', backref='user', lazy=True)
     comments = db.relationship('Comment', backref='user', lazy=True)
     likes = db.relationship('Like', backref='user', lazy=True)
-
-
+    is_admin = db.Column(db.Boolean, unique=False, default=False)
     def __repr__(self):
         return f"User <{self.username}>"
 
+
+categories = db.Table(
+    "categories",
+    db.Column("category_id", db.Integer, db.ForeignKey("category.id")),
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
+)
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
-    author = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    categories = db.relationship("Category", secondary=categories, backref="posts", lazy="select")
     comments = db.relationship('Comment', backref='post', lazy=True)
     likes = db.relationship('Like', backref='post', lazy=True)
 
+    @property
+    def description(self):
+        truncate = lambda text, limit: text if len(text) <= limit else text[:limit - 3] + '...'
+        return truncate(self.content, 120)
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(60), nullable=False)
+
+    def __repr__(self):
+        return f"Category <{self.title}>"
+
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
