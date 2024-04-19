@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Registration page</title>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+{% for msg in get_flashed_messages(True) %}
+<div class="flash">{{msg}}</div>
+{% endfor %}
+<form action="/register" method="post" class="form-contact">
+<p><label>Имя: </label> <input type="text" name="first_name" value="" required />
+<p><label>Фамилия: </label> <input type="text" name="last_name" value="" required />
+<p><label>Username: </label> <input type="text" name="username" value="" required />
+<p><label>Email: </label> <input type="text" name="email" value="" required />
+<p><label>Пароль: </label> <input type="password" name="password" value="" required />
+<p><label>Повтор пароля: </label> <input type="password" name="confirm_password" value="" required />
+<p><input type="submit" value="Регистрация" />
+</form>
+{% endblock %}
