@@ -32,6 +32,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpeg')
     content = db.Column(db.Text, nullable=False)
     categories = db.relationship("Category", secondary=categories, backref="posts", lazy="select")
     comments = db.relationship('Comment', backref='post', lazy=True)

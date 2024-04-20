@@ -13,8 +13,8 @@ class CreatePostForm(FlaskForm):
     submit = SubmitField("Submit Post")
 
 class CommentForm(FlaskForm):
-    body = CKEditorField("Blog Content", validators=[DataRequired()])
-    submit = SubmitField("Submit Comment")
+    body = StringField("Blog Content", validators=[DataRequired()])
+
 class RegisterForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])

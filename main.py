@@ -1,6 +1,7 @@
-from flask import Flask, render_template, flash, request, session, redirect, url_for
+from flask import Flask, render_template, flash, request, session, redirect, url_for, send_from_directory
 from flask_admin import Admin
-from flask_ckeditor import CKEditor
+from flask_admin.contrib.fileadmin import FileAdmin
+from flask_ckeditor import CKEditor, upload_fail, upload_success
 from flask_login import LoginManager, login_user, login_required, logout_user, user_logged_in
 
 from models import *
@@ -30,6 +31,9 @@ admin.add_view(UserAdmin(User, db.session))
 admin.add_view(PostAdmin(Post, db.session))
 
 ckeditor = CKEditor(app)
+
+# basedir = os.path.abspath(os.path.dirname(__file__))
+# admin.add_view(FileAdmin(basedir, '/static/', name='Static Files'))
 @app.route('/')
 def index():
     post = Post(title='first', content='Разрешите фоновую активность. Еще одно возможное решение вашей проблемы - отключить ограничения фонового выполнения. Сделайте необходимые')
@@ -119,31 +123,31 @@ def load_user(user):
 def show_single_post(post_id):
     requested_post = Post.query.get_or_404(post_id)
 
-    comment_form = CommentForm()
-    if comment_form.validate_on_submit():
+
+    if request.method == "POST":
         if not current_user.is_authenticated:
             flash("You need to login or register to comment.")
             return redirect(url_for('login'))
-
+        new_comment_text = request.form.get("comment")
         new_comment = Comment(
-            text=comment_form.comment.data,
+            text=new_comment_text,
             author=current_user,
             post_id=requested_post.id
         )
         db.session.add(new_comment)
         db.session.commit()
-        like = Like.query.filter_by(author=current_user.id, post_id=post_id).first()
-
-        if not requested_post:
-            flash("Post does not exists.", category='error')
-        elif like:
-            db.session.delete(like)
-            db.session.commit()
-        else:
-            like = Like(author=current_user.id, post_id=post_id)
-            db.session.add(like)
-            db.session.commit()
-    return render_template("single_post.html", post=requested_post, form=comment_form)
+    # like = Like.query.filter_by(author=current_user.id, post_id=post_id).first()
+    #
+    # if not requested_post:
+    #     flash("Post does not exists.", category='error')
+    # elif like:
+    #    db.session.delete(like)
+    #    db.session.commit()
+    # else:
+    #     like = Like(author=current_user.id, post_id=post_id)
+    #     db.session.add(like)
+    #     db.session.commit()
+    return render_template("single_post.html", post=requested_post)
 
 # @app.route("/create_comment/<post_id>", methods=['POST'])
 # @login_required
