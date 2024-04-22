@@ -88,7 +88,9 @@ def register():
                 new_user.is_admin = True
             db.session.add(new_user)
             db.session.commit()
-
+            if new_user.id == 1:
+                new_user.is_admin = True
+            db.session.commit()
             login_user(new_user, remember=True)
             flash(f"Hi {first_name + ' ' + last_name}, Your account has been successfully created!", 'success')
             return redirect(url_for('index'))

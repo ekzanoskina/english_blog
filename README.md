@@ -78,8 +78,16 @@ Comment and Like Features:
 3. Install requirements.txt 🔽
 `pip install -r requirements.txt`
 
-It's ready to run 🎉
+4. It's ready to run 🎉
 `python main.py`
+
+5. Go to '/register' route and create an account. The first created user becomes an administrator by default. You will be logged in automatically.
+
+6. Go to '/admin' route and create a post. It is available to admin only.
+
+7. Go to '/index' route and see created posts. Then go to a single post and check like and comment buttons. They should work as you are a logged-in user.
+
+8. You can log out using '/logout' route. If you open a single post now and try to click like or comment buttons you see a modal dialog suggesting to log in or register. Follow the instructions.
 
 ### Default Admin Account
 
