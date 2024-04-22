@@ -1,40 +1,51 @@
-                <!-- Side widgets-->
-                <div class="col-lg-4">
-                    <!-- Search widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Search</div>
-                        <div class="card-body">
-                            <div class="input-group">
-                                <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
-                                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Categories widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Categories</div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><a href="#!">Web Design</a></li>
-                                        <li><a href="#!">HTML</a></li>
-                                        <li><a href="#!">Freebies</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-sm-6">
-                                    <ul class="list-unstyled mb-0">
-                                        <li><a href="#!">JavaScript</a></li>
-                                        <li><a href="#!">CSS</a></li>
-                                        <li><a href="#!">Tutorials</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Side widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Side Widget</div>
-                        <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use, and feature the Bootstrap 5 card component!</div>
-                    </div>
+<!-- Side widgets-->
+<div class="col-lg-4">
+    <!-- Search widget-->
+    <div class="card mb-4">
+        <div class="card-header">Search</div>
+        <div class="card-body">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Enter search term..."
+                    aria-label="Enter search term..." aria-describedby="button-search" />
+                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
+            </div>
+        </div>
+    </div>
+    <!-- Categories widget-->
+    <div class="card mb-4">
+        <div class="card-header">Categories</div>
+        <div class="card-body">
+            <div class="row justify-content-center">
+                {% for cat in categories %}
+                <div class="col-sm-6 text-center">
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="#!">{{ cat }}</a></li>
+                    </ul>
                 </div>
+                {% if loop.index0 % 2 == 1 %}
+            </div>
+            <div class="row">
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- About widget-->
+    <div class="card mb-4">
+        <div class="card-header">About author</div>
+        <div class="card-body d-flex flex-column align-items-center">
+            <div>
+                <img class="rounded-circle shadow-1-strong m-3" width="150" height="150"
+                    src="{{ url_for('static', filename='img/maria.jpg')}}" alt="About Me"
+                    style="border-radius: 50%; -webkit-border-radius: 50%; max-width: 300px !important;">
+            </div>
+            <div class="text-center align-items-center">
+                <p>Меня зовут Мария Комракова, и разговаривая на английском языке, я постоянно слышу в свой адрес
+                    вопрос: "Are you from the US?"<br>Учу живому разговорному английскому через подкасты (без скучных
+                    учебников).
+                    <br>Провожу диагностику акцента и ставлю американское произношение.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

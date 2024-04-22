@@ -4,12 +4,11 @@ function LetLike(event) {
 
   // Get the post ID from the form data
   const postId = document.getElementById('postId').value;
-
-
+  var csrf_token = document.getElementById("csrf_token").value
   // Send a POST request to the Flask route to toggle the like
   fetch('/toggle_like', {
     method: 'POST',
-    headers: {
+    headers: {"X-CSRFToken": csrf_token,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ post_id: postId})

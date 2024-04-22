@@ -1,0 +1,12 @@
+<!-- comment_display.html -->
+<div class="d-flex flex-start">
+    <img class="rounded-circle shadow-1-strong me-3" src="{{ url_for('static', filename='img/profile.png') }}"
+        alt="avatar" width="60" height="60" />
+    <div>
+        <h6 class="fw-bold mb-1">{{ comment.user.full_name }}</h6>
+        <div class="d-flex align-items-center mb-3">
+            <p class="mb-0">{{ comment.date_posted_str }}</p>
+        </div>
+        <p class="mb-0">{{ comment.text }}</p>
+    </div>
+</div>

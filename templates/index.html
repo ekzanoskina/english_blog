@@ -1,43 +1,108 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    <title>Main page</title>
+<title>Main page</title>
 {% endblock %}
 
 {% block content %}
-                <!-- Blog entries-->
-                <div class="col-lg-8">
-                    {% for post in all_posts %}
-                    <!-- Featured blog post-->
-                    {% if loop.first %}
-{% include 'blog_post.html' %}
-                    <!-- Nested row for non-featured blog posts-->
-                    {% else %}
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <!-- Blog post-->
-{% include 'blog_post.html' %}
-                            </div>
-                        <div class="col-lg-6">
-                            <!-- Blog post-->
-{% include 'blog_post.html' %}
-                        </div>
-                    </div>
-                    {% endif %}
-                      {% endfor %}
-                    <!-- Pagination-->
-                    <nav aria-label="Pagination">
-                        <hr class="my-0" />
-                        <ul class="pagination justify-content-center my-4">
-                            <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Newer</a></li>
-                            <li class="page-item active" aria-current="page"><a class="page-link" href="#!">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#!">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#!">3</a></li>
-                            <li class="page-item disabled"><a class="page-link" href="#!">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#!">15</a></li>
-                            <li class="page-item"><a class="page-link" href="#!">Older</a></li>
-                        </ul>
-                    </nav>
+
+<div class="col-lg-8">
+    {% for post in all_posts %}
+    {% if loop.first %}
+    <!-- Featured blog post-->
+    <div class="card mb-4" style="justify-content: space-between">
+        <div class="card-img-container">
+            <img class="card-img-top img-fluid" style="height: 400px"
+                src="{{ url_for('static', filename='img/post_img/' + post.image_file) }}" alt="post-image" />
+        </div>
+        <div class="card-body">
+            <div class="small text-muted">{{post.date_posted_str}}</div>
+            <h2 class="card-title">{{post.title|capitalize}}</h2>
+            <p class="card-text">{{post.description|safe}}</p>
+            <div class="d-flex align-bottom">
+                <a class="btn btn-primary " href="{{url_for('show_single_post', post_id=post.id)}}">Read more →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nested row for non-featured blog posts-->
+    <div class="row">
+
+        {% else %}
+        <div class="col-6" style="display: flex;
+  flex-wrap: wrap;">
+            <!-- Blog post-->
+            <div class="card mb-4 position-relative">
+                <div class="card-img-container">
+                    <img class="card-img-top img-fluid" style="height: 250px"
+                        src="{{ url_for('static', filename='img/post_img/' + post.image_file) }}" alt="post-image" />
                 </div>
-                {% include "sidebar.html" %}
+                <div class="card-body align-bottom pb-5">
+                    <div class="small text-muted inline-block">{{post.date_posted_str}}</div>
+                    <h2 class="card-title">{{post.title|capitalize}}</h2>
+                    <p class="card-text ">{{post.description|safe}}</p>
+                </div>
+                <div class="position-absolute bottom-0 start-0 p-3">
+                    <a class="btn btn-primary " href="{{url_for('show_single_post', post_id=post.id)}}">Read more →</a>
+                </div>
+            </div>
+        </div>
+        {% if loop.index % 2 == 1 %}
+    </div>
+    <div class="row">
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+
+
+
+    <!-- Navigation section for pagination controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center my-4">
+            <!-- Check if there is a previous page -->
+            {% if pagination.has_prev %}
+            <li class="page-item">
+                <!-- If there is, create a link to the previous page -->
+                <a class="page-link" href="/?page={{ pagination.prev_num }}">Previous</a>
+            </li>
+            {% else %}
+            <!-- If not, show a disabled 'Previous' button -->
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            <!-- Loop through each page number provided by pagination.iter_pages() -->
+            {% for page_num in pagination.iter_pages() %}
+            <!-- Check if the page number exists (not None) -->
+            {% if page_num %}
+            <!-- Check if the current page is not the active page -->
+            {% if page_num != pagination.page %}
+            <!-- Create a clickable link for the page number -->
+            <li class="page-item"><a class="page-link" href="/?page={{ page_num }}">{{ page_num }}</a></li>
+            {% else %}
+            <!-- Highlight the current page as active and not clickable -->
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ page_num }}</span>
+            </li>
+            {% endif %}
+            {% else %}
+            <!-- For gaps in the pagination links, show ellipsis -->
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+            {% endfor %}
+
+            <!-- Check if there is a next page -->
+            {% if pagination.has_next %}
+            <li class="page-item">
+                <!-- If there is, create a link to the next page -->
+                <a class="page-link" href="/?page={{ pagination.next_num }}">Next</a>
+            </li>
+            {% else %}
+            <!-- If not, show a disabled 'Next' button -->
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% include "sidebar.html" %}
 {% endblock %}

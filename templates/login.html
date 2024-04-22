@@ -1,48 +1,41 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}  <!-- Extends base layout -->
+
 {% block title %}
-    <title>Registration page</title>
+<title>Login page</title>  <!-- Block for the page title -->
 {% endblock %}
 
-{% block content %}
-
-  <div class="container">
-    <div class="row justify-content-md-center">
-      <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
-        <div class="bg-white p-4 rounded shadow m-3">
-          <div class="row">
-            <div class="col-12">
-
-    <form name="Login" method="post" novalidate class="form">
-            <div class="form-group">
-                              {{ form.email.label(class="form-label") }}
-              <input type="text" class="form-control" id="first_name" name="email" required>
-                </div>
-    <div class="form-group">
-            <div class="form-group">
-                              {{ form.password.label(class="form-label") }}
-              <input type="text" class="form-control" id="password" name="password" required>
-                </div>
-            </div>
-                  <div class="col-12 py-4">
-                <div class="d-grid">
-                  <button class="btn btn-lg btn-primary" type="submit">Login</button>
-                </div>
-              </div>
-
-    </form>
-        {% with messages=get_flashed_messages() %}
+{% block content %}  <!-- Main content block -->
+<div class="container">
+  <div class="row justify-content-center">  <!-- Centres the form on the page -->
+    <div class="col-md-8 col-lg-6">
+      <div class="bg-white p-4 rounded shadow my-3">  <!-- Form styling -->
+        <form method="post" action="{{ url_for('login') }}" class="form">  <!-- Login form with action set to the 'login' route -->
+          {{ form.csrf_token }}
+          <div class="form-group">
+            {{ form.email.label(class="form-label") }}  <!-- Email field with label -->
+            {{ form.email(class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ form.password.label(class="form-label") }}  <!-- Password field with label -->
+            {{ form.password(class="form-control") }}
+          </div>
+          <div class="d-grid py-4">
+            {{ form.submit(class="btn btn-primary btn-lg") }}  <!-- Submit button -->
+          </div>
+        </form>
+        {% with messages = get_flashed_messages() %}
+        <!-- Flashed messages for login feedback -->
         {% if messages %}
-        {% for message in messages %}
-        <p style="color: red">{{ message }}</p>
-        {% endfor %}
-                        {% endif %}
+          {% for message in messages %}
+            <p style="color: red">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
         {% endwith %}
-
-<div class="d-flex justify-content-center"><p>I don't have an account. <a class="link-offset-2" href="/register">Sign up</a></p></div>
-                  </div>
+        <div class="text-center">
+          <p>I don't have an account. <a href="{{ url_for('register') }}">Sign up</a></p>  <!-- Sign up link -->
+        </div>
       </div>
     </div>
   </div>
-            </div>
-        </div>
-{% endblock %}
+</div>
+{% endblock %}  <!-- End of content block -->

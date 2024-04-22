@@ -2,7 +2,7 @@ import re
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, FileField
-from wtforms.validators import DataRequired, URL, Length, EqualTo, regexp
+from wtforms.validators import DataRequired, URL, Length, EqualTo, regexp, Email, Optional
 from flask_ckeditor import CKEditorField
 
 
@@ -30,19 +30,20 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Log in")
+    submit = SubmitField('Login')
 
 class RegistrationForm(FlaskForm):
     first_name = StringField('First Name', [Length(min=4)])
     last_name = StringField('Last Name', [Length(min=4)])
     username = StringField('Username', [Length(min=4)])
     email = StringField('Email Address', [Length(min=6)])
-    image_file = FileField('Image File', [regexp(r'^[^/\\]\.jpg$')])
+    image_file = FileField('Image File', [Optional()])
     password = PasswordField('Password', [
         DataRequired(),
-        EqualTo('Confirm Password', message='Passwords must match')
+        EqualTo('confirm_password', message='Passwords must match!')
     ])
-    confirm = PasswordField('Repeat Password')
+    confirm_password = PasswordField('Repeat Password')
+    submit = SubmitField('Register')
 
     def validate_image(form, field):
         if field.data:

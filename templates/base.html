@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     {% block title %}
     {% endblock %}
-      <!-- Bootstrap core CSS -->
-  <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}"  type="text/css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
-  <link href="{{ url_for('static', filename='css/clean-blog.min.css')}}"  type="text/css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/clean-blog.min.css')}}" type="text/css" rel="stylesheet">
 </head>
+
 <body>
-{% include "header.html" %}
+    {% include "header.html" %}
 
-        <!-- Page content-->
-        <div class="container">
-            <div class="row">
-                {% block content %}
-                {% endblock %}
+    <!-- Page content-->
+    <div class="container">
+        <div class="row">
+            {% block content %}
+            {% endblock %}
 
 
-            </div>
         </div>
+    </div>
 
-{% include "footer.html" %}
-<!-- Bootstrap core JavaScript -->
-<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
-<!-- Custom scripts for this template -->
-<script src="{{ url_for('static', filename='js/clean-blog.min.js')}}"></script>
-<script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
+    {% include "footer.html" %}
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <!-- Custom scripts for this template -->
+    <script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
 </body>
+
 </html>
