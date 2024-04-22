@@ -6,20 +6,29 @@
 {% block content %}
 
   <div class="container">
-    <div class="row">
+    <div class="row justify-content-md-center">
+      <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
+        <div class="bg-white p-4 rounded shadow m-3">
+          <div class="row">
+            <div class="col-12">
 
-      <div class="col-lg-8 col-md-10 mx-auto content">
     <form name="Login" method="post" novalidate class="form">
-                {{ form.hidden_tag() }}
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email}}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
+            <div class="form-group">
+                              {{ form.email.label(class="form-label") }}
+              <input type="text" class="form-control" id="first_name" name="email" required>
+                </div>
+    <div class="form-group">
+            <div class="form-group">
+                              {{ form.password.label(class="form-label") }}
+              <input type="text" class="form-control" id="password" name="password" required>
+                </div>
+            </div>
+                  <div class="col-12 py-4">
+                <div class="d-grid">
+                  <button class="btn btn-lg btn-primary" type="submit">Login</button>
+                </div>
+              </div>
+
     </form>
         {% with messages=get_flashed_messages() %}
         {% if messages %}
@@ -29,9 +38,11 @@
                         {% endif %}
         {% endwith %}
 
-
+<div class="d-flex justify-content-center"><p>I don't have an account. <a class="link-offset-2" href="/register">Sign up</a></p></div>
                   </div>
       </div>
     </div>
   </div>
+            </div>
+        </div>
 {% endblock %}

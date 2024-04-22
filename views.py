@@ -1,5 +1,5 @@
-import imghdr
 import os
+import uuid
 
 from flask import redirect, url_for, request
 from flask_admin.contrib.sqla import ModelView
@@ -24,10 +24,13 @@ class UserAdmin(AdminModelView):
     column_labels = {'first_name': 'First name', 'last_name': 'Last name', 'username': 'Username', 'email': 'Email Address'}
     column_filters = ('username', 'email')
 
+
+
 class PostAdmin(AdminModelView):
     # Pass additional parameters to 'path' to FileUploadField constructor
 
-    form_overrides = dict(content=CKEditorField, image_file=partial(FileUploadField, base_path=os.path.abspath(os.path.dirname(__file__))+'/static/'))
+
+    form_overrides = dict(content=CKEditorField, image_file=partial(FileUploadField, base_path=os.path.abspath(os.path.dirname(__file__))+'/static/img/post_img'))
 
     column_labels = {'title': 'Post Title', 'content': 'Content'}
     create_template = 'edit.html'

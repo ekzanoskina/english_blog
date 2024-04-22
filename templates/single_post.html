@@ -1,155 +1,138 @@
-               {% extends 'base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}
+
     <title>{{post.title|capitalize}}</title>
-<style>body{background: #eee}.date{font-size: 11px}.comment-text{font-size: 12px}shadow-none{box-shadow: none}.name{color: #007bff}.cursor:hover{color: blue}.cursor{cursor: pointer}.textarea{resize: none}</style>
-               <!-- Option 1: Include in HTML -->
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
                {% endblock %}
 
 {% block content %}
                 <div class="col-lg-8">
-                    <!-- Post content-->
-                    <article>
-                        <!-- Post header-->
-                        <header class="mb-4">
-                            <!-- Post title-->
-                            <h1 class="fw-bolder mb-1">{{post.title|capitalize}}</h1>
-                            <!-- Post meta content-->
-                            <div class="text-muted fst-italic mb-2">Posted on {{post.date_posted.strftime('%B %d, %Y')}}</div>
-                            <!-- Post categories-->
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
-                        </header>
-                        <!-- Preview image figure-->
-                        <figure class="mb-4"><img class="img-fluid rounded" src="{{ url_for('static', filename='img/post_img/post1.png')}}" alt="..." /></figure>
-                        <!-- Post content-->
-                        <section class="my-1">
-                            <p class="fs-5">{{post.content|safe}}</p>
-                        </section>
-<!-- Comments section-->
-            <!-- Кнопки с иконками -->
-                 <div class="my-2">
-                    <div class="d-flex flex-row fs-12">
-                        <button class="like m-1 border-0 btn btn-light" type='button' ><i class="bi bi-hand-thumbs-up"></i><span class="m-1">544444</span></button>
-                        <button class="comment m-1 border-0 btn btn-light" onclick="myFunction()"><i class="bi bi-chat-text"></i><span class="m-1">{{post.comments|length}}</span></button>
-                        <button class="share m-1 border-0 btn btn-light"><i class="bi bi-share"></i><span class="m-1"></span></button>
-                    </div>
-        </div>
-                    </article>
-
-
-{% if post.comments|length %}
-
-                    <section class="mb-5">
-                        <div class="card bg-light">
-                            <div class="card-body p-4">
-                                <!-- Comment form-->
-<div id="myDIV">
-
-
-            <div class="d-flex flex-start">
-              <img class="rounded-circle shadow-1-strong me-3"
-                src="{{ url_for('static', filename='img/profile.png')}}" alt="avatar" width="60"
-                height="60" />
-              <div class="form-outline w-100">
-
-    <form method="POST">
-        <textarea class="form-control" name="comment" rows="3" placeholder="Join the discussion and leave a comment!" ></textarea>
-
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-  <button  class="btn btn-primary m-2" type="button">Submit</button>
-  <button class="btn btn-outline-primary m-2" type="button">Cancel</button>
-</div>
-    </form>
-
-              </div>
-
-
-          </div>
+  <article>
+    <header class="mb-4">
+      <h1 class="fw-bolder mb-1">{{ post.title|capitalize }}</h1>
+      <input type="hidden" id="postId" value="{{ post.id }}">
+      <div class="text-muted fst-italic mb-2">Posted on {{post.date_posted_str}}</div>
+      <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
+      <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
+    </header>
+    <figure class="mb-4"><img class="img-fluid rounded" src="{{ url_for('static', filename='img/post_img/' + post.image_file) }}" alt="..." /></figure>
+    <section class="my-1">
+      <p class="fs-5">{{ post.content|safe }}</p>
+    </section>
+    <div class="my-2">
+      <div class="d-flex flex-row fs-12">
+        <button id='like-button' class="like m-1 border-0 btn btn-light" type='button' onclick="{{like_func}}()"><i class="bi bi-hand-thumbs-up"></i><span class="m-1" id="like-count">{{ post.likes|length }}</span></button>
+        <button class="comment m-1 border-0 btn btn-light" onclick="{{comment_input_func}}()"><i class="bi bi-chat-text"></i><span class="m-1" id="commentCount">{{ post.comments|length }}</span></button>
+        <button class="share m-1 border-0 btn btn-light"><i class="bi bi-share"></i><span class="m-1"></span></button>
+      </div>
     </div>
-
-        <div class="card text-dark">
-            {% for comment in post.comments %}
-          <div class="card-body p-4">
-             {% if loop.first %}
-            <h4 class="mb-5">Recent comments</h4>
-              {% endif %}
+    {% if post.comments %}
+    <section class="mb-5">
+      <div class="card bg-light">
+        <div class="card-body p-4">
+          <div id="myDIV" style="display: none;">
             <div class="d-flex flex-start">
-              <img class="rounded-circle shadow-1-strong me-3"
-                src="{{ url_for('static', filename='img/profile.png')}}" alt="avatar" width="60"
-                height="60" />
-              <div>
-                <h6 class="fw-bold mb-1">Maggie Marsh</h6>
-                <div class="d-flex align-items-center mb-3">
-                  <p class="mb-0">
-                    March 07, 2021
-                  </p>
-                  <a href="#!" class="link-muted"><i class="fas fa-pencil-alt ms-2"></i></a>
-                  <a href="#!" class="link-muted"><i class="fas fa-redo-alt ms-2"></i></a>
-                  <a href="#!" class="link-muted"><i class="fas fa-heart ms-2"></i></a>
+              <img class="rounded-circle shadow-1-strong me-3" src="{{ url_for('static', filename='img/profile.png')}}" alt="avatar" width="60" height="60" />
+              <div class="form-outline w-100">
+                <textarea class="form-control" id="commentInput" name="text" required rows="3" placeholder="Join the discussion and leave a comment!"></textarea>
+                <div class="d-grid d-md-flex justify-content-md-end">
+                  <button class="btn btn-primary m-2" onclick="postComment()">Submit</button>
+                  <button class="btn btn-outline-primary m-2" type="button">Cancel</button>
                 </div>
-                <p class="mb-0">
-                    {{comment.text}}
-                </p>
               </div>
             </div>
-
           </div>
-{% if not loop.last %}
-          <hr class="my-0" />
-            {% endif %}
-            {% endfor %}
-
-                        </div>
-                            </div>
-                    </section>
-{% else %}
-                    <div id="myDIV">
-                    <section class="mb-4">
-                        <div class="card bg-light">
-                            <div class="card-body p-4">
-
-
-
-            <div class="d-flex flex-start">
-              <img class="rounded-circle shadow-1-strong me-3"
-                src="{{ url_for('static', filename='img/profile.png')}}" alt="avatar" width="60"
-                height="60" />
-              <div class="form-outline w-100">
-
-    <form method="POST">
-        <textarea class="form-control" name="comment" rows="3" placeholder="Join the discussion and leave a comment!" ></textarea>
-
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-  <button  class="btn btn-primary mt-3" type="button">Submit</button>
-  <button class="btn btn-outline-primary mt-3" type="button">Cancel</button>
-</div>
-    </form>
-
-              </div>
-
-
-          </div>
+          <div class="modal" tabindex="-1" role="dialog" id="modal_dialog_login" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+  </div>
+</div>
+          <div class="card text-dark" id="commentsSection">
+            {% for comment in post.comments %}
+            <div class="card-body p-4">
+              {% if loop.first %}
+              <h4 class="mb-5">Recent comments</h4>
+              {% endif %}
+              <div class="d-flex flex-start">
+                <img class="rounded-circle shadow-1-strong me-3" src="{{ url_for('static', filename='img/profile.png')}}" alt="avatar" width="60" height="60" />
+                <div>
+                  <h6 class="fw-bold mb-1">{{comment.user.full_name}}</h6>
+                  <div class="d-flex align-items-center mb-3">
+                    <p class="mb-0">{{comment.date_posted_str}}</p>
+                  </div>
+                  <p class="mb-0">{{ comment.text }}</p>
+                </div>
+              </div>
+                </div>
+              {% if not loop.last %}
+              <hr class="my-0" />
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+    {% else %}
+    <div id="myDIV" style="display: none;">
+      <section class="mb-4">
+        <div class="card bg-light">
+          <div class="card-body p-4" id="field">
+            <div class="d-flex flex-start">
+<img class="rounded-circle shadow-1-strong me-3" src="{{ url_for('static', filename='img/profile.png')}}" alt="avatar" width="60" height="60" />
+              <div class="form-outline w-100">
+                <textarea class="form-control" id="commentInput" name="text" required rows="3" placeholder="Join the discussion and leave a comment!"></textarea>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button class="btn btn-primary m-2" onclick="postComment()">Submit</button>
+                  <button class="btn btn-outline-primary m-2" type="button">Cancel</button>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+        </div>
+      </section>
+    </div>
+<div class="modal" tabindex="-1" role="dialog" id="modal_dialog_login" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 
-               </div>
-
-                                        </section>
-                                            {% endif %}
-                                            </div>
-                    </div>
-
+    {% endif %}
+  </article>
+</div>
                {% include "sidebar.html" %}
-                              <script>
-function myFunction() {
-  var x = document.getElementById("myDIV");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
-}
-</script>
+               <script src="{{url_for('static', filename='js/comments.js')}}"></script>
+                              <script src="{{url_for('static', filename='js/likes.js')}}"></script>
+
                {% endblock %}

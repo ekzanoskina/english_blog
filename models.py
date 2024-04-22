@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from flask_login import UserMixin
@@ -14,13 +15,17 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(60), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpeg')
+    image_file = db.Column(db.String(20), nullable=False, default='profile.png')
     password = db.Column(db.String(60), nullable=False)
     comments = db.relationship('Comment', backref='user', lazy=True)
     likes = db.relationship('Like', backref='user', lazy=True)
     is_admin = db.Column(db.Boolean, unique=False, default=False)
     def __repr__(self):
         return f"User <{self.username}>"
+
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
 
 
 categories = db.Table(
@@ -42,6 +47,12 @@ class Post(db.Model):
     def description(self):
         truncate = lambda text, limit: text if len(text) <= limit else text[:limit - 3] + '...'
         return truncate(self.content, 120)
+
+    @property
+    def date_posted_str(self):
+        return self.date_posted.strftime('%B %d, %Y')
+
+
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
 
@@ -61,9 +72,13 @@ class Comment(db.Model):
     author = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
 
-
+    @property
+    def date_posted_str(self):
+        return self.date_posted.strftime('%B %d, %Y')
     def __repr__(self):
         return f"Comment('{self.author}', '{self.text}')"
+
+
 
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
