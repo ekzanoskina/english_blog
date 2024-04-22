@@ -84,8 +84,11 @@ def register():
         else:
             # Password hashing for security
             new_user = User(first_name=first_name, last_name=last_name, email=email, username=username, password=generate_password_hash(password))
+            if new_user.id == 1:
+                new_user.is_admin = True
             db.session.add(new_user)
             db.session.commit()
+
             login_user(new_user, remember=True)
             flash(f"Hi {first_name + ' ' + last_name}, Your account has been successfully created!", 'success')
             return redirect(url_for('index'))
@@ -187,4 +190,4 @@ def toggle_like():
 
 # Check if the script is the main program and run the app in debug mode if it is
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
