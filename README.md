@@ -73,7 +73,7 @@ Comment and Like Features:
 `git clone https://github.com/ekzanoskina/english_blog`
 
 2. Go to directory 📁
-`cd flaskBlog`
+`cd english_blog`
 
 3. Install requirements.txt 🔽
 `pip install -r requirements.txt`
