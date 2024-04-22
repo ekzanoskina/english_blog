@@ -70,7 +70,7 @@ Comment and Like Features:
 ## Running the Project
 
 1. Download source code from Github 💾
-`git clone https://github.com/DogukanUrker/flaskBlog.git`
+`git clone https://github.com/ekzanoskina/english_blog`
 
 2. Go to directory 📁
 `cd flaskBlog`
