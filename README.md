@@ -89,12 +89,9 @@ Comment and Like Features:
 
 8. You can log out using '/logout' route. If you open a single post now and try to click like or comment buttons you see a modal dialog suggesting to log in or register. Follow the instructions.
 
-### Default Admin Account
-
-Email: admin@gmail.com
-Password: admin
-
 ### Demo
+https://ezanoskina.pythonanywhere.com/index
+Register to receive the full range of functions!
 
 
 
