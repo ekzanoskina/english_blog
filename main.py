@@ -1,11 +1,12 @@
-from flask import Flask, render_template, flash, request, session, redirect, url_for, send_from_directory, jsonify
+from flask import Flask, render_template, flash, jsonify
 from flask_admin import Admin
 from flask_ckeditor import CKEditor
 from flask_login import LoginManager, login_user, logout_user, user_logged_in
-
+from werkzeug.security import generate_password_hash, check_password_hash
+import json
 from models import *
 from forms import *
-from werkzeug.security import generate_password_hash, check_password_hash
+
 from views import *
 from flask_wtf.csrf import CSRFProtect
 
@@ -42,6 +43,7 @@ admin.add_view(CategoryAdmin(Category, db.session))
 # Initialize CKEditor with our Flask app
 ckeditor = CKEditor(app)
 
+
 # Route for the home page that lists blog posts with pagination
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -49,11 +51,13 @@ def index():
     # Try to get the 'page' argument in the URL, defaulting to 1 if it's not provided
     page = request.args.get('page', 1, type=int)
     # Query and paginate the posts
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=app.config.get('POSTS_PER_PAGE'), error_out=False)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=app.config.get('POSTS_PER_PAGE'),
+                                                                  error_out=False)
     # Query all categories
     categories = Category.query.all()
     # Render the index page with the posts and categories
     return render_template('index.html', all_posts=posts.items, pagination=posts, categories=categories)
+
 
 # Route for the registration page
 @app.route("/register", methods=["POST", "GET"])
@@ -83,7 +87,8 @@ def register():
             flash('Passwords are not matching', category='error')
         else:
             # Password hashing for security
-            new_user = User(first_name=first_name, last_name=last_name, email=email, username=username, password=generate_password_hash(password))
+            new_user = User(first_name=first_name, last_name=last_name, email=email, username=username,
+                            password=generate_password_hash(password))
             if new_user.id == 1:
                 new_user.is_admin = True
             db.session.add(new_user)
@@ -96,6 +101,7 @@ def register():
             return redirect(url_for('index'))
     # Render registration template
     return render_template("register.html", form=register_form)
+
 
 # Route for login page
 @app.route('/login', methods=["GET", "POST"])
@@ -116,6 +122,7 @@ def login():
     # Render login template
     return render_template("login.html", form=login_form)
 
+
 # Route to handle user logout
 @app.route('/logout')
 def logout():
@@ -123,10 +130,12 @@ def logout():
     flash("You have been logged out.")
     return redirect(url_for('index'))
 
+
 # Callback to reload the user object
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 # Route for displaying a single post
 @app.route("/<int:post_id>", methods=["GET"])
@@ -139,7 +148,8 @@ def show_single_post(post_id):
     comment_input_func = 'ShowCommentInput' if current_user.is_authenticated else 'DisplayPopup'
     like_func = 'LetLike' if current_user.is_authenticated else 'DisplayPopup'
     # Render the single post template with the required context variables
-    return render_template("single_post.html", post=post, comment_input_func=comment_input_func, like_func=like_func, categories=all_categories)
+    return render_template("single_post.html", post=post, comment_input_func=comment_input_func, like_func=like_func,
+                           categories=all_categories)
 
 
 # Define a route to handle POST requests for submitting comments
